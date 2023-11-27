@@ -13,17 +13,23 @@ function store(e){
         lname,
         email,
     };
-    if (localStorage.getItem('users') === null) {
-        var users = [];
-        users.push(Person);
-        localStorage.setItem('users', JSON.stringify(users));
-      } else {
-        var storedUsers = JSON.parse(localStorage.getItem('users'));
-        storedUsers.push(Person);
-        localStorage.setItem('users', JSON.stringify(storedUsers));
-      }
-
-      showUsers();
+    // if (localStorage.getItem('users') === null) {
+    //     var users = [];
+    //     users.push(Person);
+    //     localStorage.setItem('users', JSON.stringify(users));
+    //   } else {
+    //     var storedUsers = JSON.parse(localStorage.getItem('users'));
+    //     storedUsers.push(Person);
+    //     localStorage.setItem('users', JSON.stringify(storedUsers));
+    //   }
+    axios.post("https://crudcrud.com/api/2ee49e7a59de4223911314684adae107/Appontmentdata", Person)
+          .then((response)=>{
+            showUsers(response.data);
+          })
+          .catch((err)=>{
+            console.log(err)
+          })
+      // showUsers();
 }
 
 function showUsers() {
