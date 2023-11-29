@@ -13,6 +13,8 @@ function store(e){
         lname,
         email,
     };
+    
+    
     // if (localStorage.getItem('users') === null) {
     //     var users = [];
     //     users.push(Person);
@@ -22,7 +24,7 @@ function store(e){
     //     storedUsers.push(Person);
     //     localStorage.setItem('users', JSON.stringify(storedUsers));
     //   }
-    axios.post("https://crudcrud.com/api/2ee49e7a59de4223911314684adae107/Appontmentdata", Person)
+    axios.post("https://crudcrud.com/api/fe9d65f662204447a071c86612aba98d/AppointmentData", Person)
           .then((response)=>{
             showUsers(response.data);
           })
@@ -30,6 +32,18 @@ function store(e){
             console.log(err)
           })
       // showUsers();
+      window.addEventListener("DOMContentLoaded", () => {
+        axios.get("https://crudcrud.com/api/fe9d65f662204447a071c86612aba98d/AppointmentData")
+            .then((response) => {
+              for(var i=0;i<response.data.length;i++){
+                showUsers(response.data[i])
+              }
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+  
+      })
 }
 
 function showUsers() {
