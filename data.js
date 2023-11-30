@@ -1,102 +1,96 @@
-var form = document.querySelector('#form');
 
+var form = document.querySelector('#form');
 form.addEventListener('submit', store);
 
-function store(e){
+function store(e) {
     e.preventDefault();
-    var fname= document.querySelector('#fname').value;
-    var lname= document.querySelector('#lname').value;
-    var email=document.querySelector('#email').value;
-    
-    const Person={
+    var fname = document.querySelector('#fname').value;
+    var lname = document.querySelector('#lname').value;
+    var email = document.querySelector('#email').value;
+
+    const Person = {
         fname,
         lname,
         email,
     };
-    
-    
-    // if (localStorage.getItem('users') === null) {
-    //     var users = [];
-    //     users.push(Person);
-    //     localStorage.setItem('users', JSON.stringify(users));
-    //   } else {
-    //     var storedUsers = JSON.parse(localStorage.getItem('users'));
-    //     storedUsers.push(Person);
-    //     localStorage.setItem('users', JSON.stringify(storedUsers));
-    //   }
-    axios.post("https://crudcrud.com/api/fe9d65f662204447a071c86612aba98d/AppointmentData", Person)
-          .then((response)=>{
+
+    axios.post("https://crudcrud.com/api/d208596f74934f0a89d89e2a864fcba7/AppointmentData", Person)
+        .then((response) => {
             showUsers(response.data);
-          })
-          .catch((err)=>{
-            console.log(err)
-          })
-      // showUsers();
-      window.addEventListener("DOMContentLoaded", () => {
-        axios.get("https://crudcrud.com/api/fe9d65f662204447a071c86612aba98d/AppointmentData")
-            .then((response) => {
-              for(var i=0;i<response.data.length;i++){
-                showUsers(response.data[i])
-              }
-            })
-            .catch((error) => {
-              console.log(error)
-            })
-  
-      })
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 }
 
-function showUsers() {
-    var users = JSON.parse(localStorage.getItem('users'));
+window.addEventListener("DOMContentLoaded", () => {
+    axios.get("https://crudcrud.com/api/d208596f74934f0a89d89e2a864fcba7/AppointmentData")
+        .then((response) => {
+            showUsers(response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+});
+
+function showUsers(data) {
     var usersList = document.getElementById('usersList');
     usersList.innerHTML = '';
 
-    if (users !== null) {
-      users.forEach(function (Person, index) {
-        var li = document.createElement('li');
-        li.appendChild(document.createTextNode(Person.fname + '  ' + Person.lname + ' - ' + Person.email+'  '));
-        
-        var Edit=document.createElement('button');
-        Edit.appendChild(document.createTextNode('EDIT'));
-        li.appendChild(Edit);
-        Edit.onclick=function(){
-          editUser(index);
-        }
+    if (data !== null) {
+        data.forEach(function (Person, index) {
+            var li = document.createElement('li');
+            li.appendChild(document.createTextNode(Person.fname + '  ' + Person.lname + ' - ' + Person.email + '  '));
 
-        var deleteBtn = document.createElement('button');
-        deleteBtn.appendChild(document.createTextNode(' X '));
-        deleteBtn.onclick = function () {
-          deleteUser(index);
-        };
-        li.appendChild(deleteBtn);
+            var Edit = document.createElement('button');
+            Edit.appendChild(document.createTextNode('EDIT'));
+            li.appendChild(Edit);
+            Edit.onclick = function () {
+                editUser(index, data);
+            };
 
-        usersList.appendChild(li);
-      });
+            var deleteBtn = document.createElement('button');
+            deleteBtn.appendChild(document.createTextNode(' X '));
+            deleteBtn.onclick = function () {
+                deleteUser(index, data);
+            };
+            li.appendChild(deleteBtn);
+
+            usersList.appendChild(li);
+        });
     }
-  }
+}
 
-  function deleteUser(index) {
-    var users = JSON.parse(localStorage.getItem('users'));
-    users.splice(index, 1);
-    localStorage.setItem('users', JSON.stringify(users));
-    showUsers();
-  }
+function deleteUser(index, data) {
+    var userId = data[index]._id; 
+    axios.delete(`https://crudcrud.com/api/d208596f74934f0a89d89e2a864fcba7/AppointmentData/${userId}`)
+        .then((response) => {
+            showUsers(response.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
 
-  function editUser(index){
-    var users= JSON.parse(localStorage.getItem('users'));
-    var user= users[index];
+function editUser(index, data) {
+    var userId = data[index]._id; 
+    var user = data[index];
 
-    var newfname=prompt('Enter new fname', user.fname);
-    var newlname=prompt('Enter new lname',user.lname);
-    var newemail= prompt('Enter new mail', user.email);
+    var newfname = prompt('Enter new fname', user.fname);
+    var newlname = prompt('Enter new lname', user.lname);
+    var newemail = prompt('Enter new mail', user.email);
 
-    if(newfname && newlname && newemail){
-      user.fname=newfname;
-      user.lname=newlname;
-      user.email=newemail;
-      users[index]=user;
-      localStorage.setItem('users',JSON.stringify(users));
-      showUsers();
+    if (newfname && newlname && newemail) {
+        user.fname = newfname;
+        user.lname = newlname;
+        user.email = newemail;
+
+        axios.put(`https://crudcrud.com/api/d208596f74934f0a89d89e2a864fcba7/AppointmentData/${userId}`, user)
+            .then((response) => {
+                showUsers(response.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
-
-  }
+}
